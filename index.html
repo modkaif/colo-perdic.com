@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color, Number & Size Prediction Game</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .game-container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .color-selection,
+        .size-selection,
+        .number-selection {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .color-btn,
+        .size-btn,
+        .number-btn {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            width: 80px;
+            border-radius: 5px;
+        }
+
+        .color-btn.red {
+            background-color: #ff4d4d;
+            height: 41px;
+            width: 100px;
+
+        }
+
+        .color-btn.green {
+            background-color: #4CAF50;
+            height: 41px;
+            width: 100px;
+        }
+
+        .color-btn.blue {
+            background-color: blue;
+            height: 41px;
+            width: 100px;
+        }
+
+        .size-btn.big {
+            background-color: #ffd000;
+        }
+
+        .size-btn.small {
+            background-color: #809dff;
+        }
+
+        .number-btn {
+            background-color: #333;
+        }
+
+        /* Timer styling */
+        #timer {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        /* Results section styling */
+        .results-container {
+            margin-top: 30px;
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 50px;
+            background-color: #eee;
+        }
+
+        .money-section {
+            background-color: rgb(227 221 221);
+            border: 1px solid black;
+            border-radius: 20px;
+            height: 71px;
+            margin-bottom: 20px;
+            width: 233px;
+            text-align: center;
+            box-shadow: 1px 1px 10px 9px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Bet modal */
+        #bet-modal,
+        #deposit-modal,
+        #withdraw-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 999;
+            border-radius: 10px;
+        }
+
+        #bet-modal input,
+        #deposit-modal input,
+        #withdraw-modal input {
+            margin-bottom: 20px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .cut-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        /* Overlay to disable user input */
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        /* Item name styling */
+        .itemname1
+        
+         {
+            font-size: 17px;
+            font-family: sans-serif;
+            margin: 8px;
+            text-align: center;
+            margin-left: -1116px;
+        }
+        .itemname2
+        
+         {
+            font-size: 17px;
+            font-family: sans-serif;
+            margin: 8px;
+            text-align: center;
+            margin-left: 18px;
+            margin-top: -25px;
+        }
+        .itemname3{
+            font-size: 17px;
+            font-family: sans-serif;
+            margin: 8px;
+            text-align: center;
+            margin-left: 1165px;
+            margin-top: -29px;
+        }
+
+        /* Responsive adjustments for mobile */
+        @media (max-width: 600px) {
+            .color-btn,
+            .size-btn,
+            .number-btn {
+                width: 60px;
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            #timer {
+                font-size: 16px;
+            }
+
+            .game-container {
+                padding: 15px;
+            }
+
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+        }
+
+        .button-container {
+            text-align: center;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        /* Hover effect */
+        .btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        /* Specific button styles */
+        #deposit-btn {
+            background-color: #28a745;
+            margin-left: 37px;
+        }
+
+        #deposit-btn:hover {
+            color: #000000;
+            background-color: #36e55f;
+        }
+
+        #withdraw-btn {
+            background-color: #dc3545;
+            margin-left: 72px;
+            margin-top: -46px;
+        }
+
+        #withdraw-btn:hover {
+            background-color: #e26875;
+            color: black;
+        }
+        img{
+            width: 114px;
+    height: 120px;
+}
+        
+    </style>
+</head>
+
+<body>
+    <!-- Money Section -->
+    <div class="money-section">
+        <h2>Wallet : <span id="money">20</span>$</h2>
+    </div>
+
+
+    <div class="game-container">
+        <h1>Win Go 20 Seconds</h1>
+
+        <!-- Timer display -->
+        <div id="timer">Time left: 20 seconds</div>
+        <button class="btn" id="deposit-btn" onclick="showDepositModal()">Deposit</button>
+        <button class="btn" id="withdraw-btn" onclick="showWithdrawModal()">Withdraw</button>
+        <!-- Color Selection -->
+        <div class="color-selection">
+            <button class="color-btn red" onclick="selectColor('Red')">Red</button>
+            <button class="color-btn green" onclick="selectColor('Green')">Green</button>
+            <button class="color-btn blue" onclick="selectColor('Blue')">Blue</button>
+        </div>
+
+        <!-- Size Selection -->
+        <div class="size-selection">
+            <button class="size-btn big" onclick="selectSize('Big')">Big</button>
+            <button class="size-btn small" onclick="selectSize('Small')">Small</button>
+        </div>
+
+        <!-- Number Selection -->
+        <div class="number-selection">
+            <button class="number-btn" onclick="selectNumber(0)">0</button>
+            <button class="number-btn" onclick="selectNumber(1)">1</button>
+            <button class="number-btn" onclick="selectNumber(2)">2</button>
+            <button class="number-btn" onclick="selectNumber(3)">3</button>
+            <button class="number-btn" onclick="selectNumber(4)">4</button>
+            <button class="number-btn" onclick="selectNumber(5)">5</button>
+            <button class="number-btn" onclick="selectNumber(6)">6</button>
+            <button class="number-btn" onclick="selectNumber(7)">7</button>
+            <button class="number-btn" onclick="selectNumber(8)">8</button>
+            <button class="number-btn" onclick="selectNumber(9)">9</button>
+        </div>
+    </div>
+
+    <div class="itemname1">
+        BIG OR SMALL
+    </div>
+    <div class="itemname2">
+        COLOR
+    </div>
+    <div class="itemname3">
+        NUMBER
+    </div>
+
+    <!-- Results section below the game -->
+    <div class="results-container" id="results-container"></div>
+
+    <!-- Bet Modal -->
+    <div id="bet-modal">
+        <h2>Enter Your Bet Amount</h2>
+        <input type="number" id="bet-amount" placeholder="Bet Amount" />
+        <button onclick="placeBet()">Place Bet</button>
+        <button class="cut-btn" onclick="closeBetModal()">Cut</button>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div id="deposit-modal">
+        <h2>Deposit Money</h2>
+        <img src="https___mywebar.com_p_Project_0_ze2l2ijiu-at-mywebar.com.png" alt="Deposit" width="100" height="100" /> <!-- Add your image URL -->
+        <input type="number" id="deposit-amount" placeholder="Amount to Deposit" />
+        <button onclick="deposit()">Deposit</button>
+        <button class="cut-btn" onclick="closeDepositModal()">Cut</button>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdraw-modal">
+        <h2>Withdraw Money</h2>
+        <input type="number" id="withdraw-amount" placeholder="Amount to Withdraw" />
+        <button onclick="withdraw()">Withdraw</button>
+        <button class="cut-btn" onclick="closeWithdrawModal()">Cut</button>
+    </div>
+
+    <!-- Overlay for disabling input -->
+    <div id="overlay"></div>
+
+    <script>
+        let userColor = null;
+        let userSize = null;
+        let userNumber = null;
+        let userBetAmount = null;
+        let money = 20;
+        let timeLeft = 2;
+        let timerInterval;
+        let betPlaced = false;
+
+        // Select color
+        function selectColor(color) {
+            userColor = color;
+            showBetModal();
+        }
+
+        // Select size (Big/Small)
+        function selectSize(size) {
+            userSize = size;
+            showBetModal();
+        }
+
+        // Select number (0-9)
+        function selectNumber(number) {
+            userNumber = number;
+            showBetModal();
+        }
+
+        // Show the bet modal to ask for bet amount
+        function showBetModal() {
+            document.getElementById('bet-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        // Close the bet modal
+        function closeBetModal() {
+            document.getElementById('bet-modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Show the deposit modal
+        function showDepositModal() {
+            document.getElementById('deposit-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        // Close the deposit modal
+        function closeDepositModal() {
+            document.getElementById('deposit-modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Show the withdraw modal
+        function showWithdrawModal() {
+            document.getElementById('withdraw-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        // Close the withdraw modal
+        function closeWithdrawModal() {
+            document.getElementById('withdraw-modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Deposit money
+        function deposit() {
+            const depositAmount = parseInt(document.getElementById('deposit-amount').value);
+            if (depositAmount && depositAmount > 0) {
+                money += depositAmount;
+                document.getElementById('money').textContent = money;
+                alert(`You have deposited $${depositAmount}. Your new balance is $${money}.`);
+                closeDepositModal();
+            } else {
+                alert("Please enter a valid amount to deposit.");
+            }
+        }
+
+        // Withdraw money
+        function withdraw() {
+            const withdrawAmount = parseInt(document.getElementById('withdraw-amount').value);
+            if (withdrawAmount > money) {
+                alert("Invalid balance. You cannot withdraw more than your current wallet balance.");
+            } else if (withdrawAmount && withdrawAmount > 0) {
+                money -= withdrawAmount;
+                document.getElementById('money').textContent = money;
+                alert(`You have withdrawn $${withdrawAmount}. Your new balance is $${money}.`);
+                closeWithdrawModal();
+            } else {
+                alert("Please enter a valid amount to withdraw.");
+            }
+        }
+
+        // Place bet and start the game
+        function placeBet() {
+            userBetAmount = parseInt(document.getElementById('bet-amount').value);
+            if (userBetAmount && userBetAmount <= money) {
+                money -= userBetAmount;  // Deduct the bet amount from available money
+                document.getElementById('money').textContent = money;  // Update the money display
+                alert(`You placed a bet of $${userBetAmount}. Your remaining money is $${money}.`);
+                document.getElementById('bet-modal').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+                betPlaced = true; // Mark that a bet has been placed
+            } else {
+                alert("Invalid bet amount or insufficient funds.");
+            }
+        }
+
+        // Start the game when the page loads
+        window.onload = function () {
+            startGame();
+        }
+
+        // Start the game
+        function startGame() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = `Time left: ${timeLeft} seconds`;
+
+                if (timeLeft <= 5) {
+                    document.getElementById('overlay').style.display = 'block'; // Disable input
+                }
+
+                if (timeLeft <= 0) {
+                    generateResult();
+                    resetGame();
+                }
+            }, 1000);
+        }
+
+        // Generate random result
+        function generateResult() {
+            const randomColor = getRandomColor();
+            const randomSize = Math.random() > 0.5 ? 'Big' : 'Small';
+            const randomNumber = Math.floor(Math.random() * 10);
+
+            displayResult(randomColor, randomSize, randomNumber);
+
+            // Only check for win/loss if a bet was placed
+            if (betPlaced) {
+                if (userColor === randomColor || userSize === randomSize || userNumber === randomNumber) {
+                    win();
+                } else {
+                    lose();
+                }
+            }
+
+            // Reset the bet placed flag for the next round
+            betPlaced = false;
+        }
+
+        // Display the result at the top of the results section
+        function displayResult(color, size, number) {
+            const resultContainer = document.getElementById('results-container');
+            const resultItem = document.createElement('div');
+            resultItem.className = 'result-item';
+
+            // Create text for size (Big or Small)
+            const sizeText = document.createElement('span');
+            sizeText.textContent = `${size}`;
+
+            // Create a colored span to represent the color
+            const colorSpan = document.createElement('span');
+            colorSpan.style.display = 'inline-block';
+            colorSpan.style.width = '30px';
+            colorSpan.style.height = '30px';
+            colorSpan.style.borderRadius = '50%';
+            colorSpan.style.backgroundColor = color.toLowerCase();
+
+            // Create text for number (0-9)
+            const numberText = document.createElement('span');
+            numberText.textContent = `${number}`;
+
+            // Append size, color box, and number to the result item in the correct order
+            resultItem.appendChild(sizeText);   // First Big/Small
+            resultItem.appendChild(colorSpan);  // Then Color
+            resultItem.appendChild(numberText); // Lastly Number
+
+            // Prepend the result item to the result container
+            resultContainer.insertBefore(resultItem, resultContainer.firstChild);
+        }
+
+        // Get a random color
+        function getRandomColor() {
+            const colors = ['Red', 'Green', 'Blue'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Win handler
+        function win() {
+            alert("Congratulations, You won!");
+            money += userBetAmount * 2; // Double the bet amount on win
+            document.getElementById('money').textContent = money; // Update money display
+        }
+
+        // Lose handler
+        function lose() {
+            alert("You Lose!");
+            // No need to modify money here, it's already deducted on placing the bet
+        }
+
+        // Reset the game
+        function resetGame() {
+            userColor = null;
+            userSize = null;
+            userNumber = null;
+            userBetAmount = null;
+            betPlaced = false; // Reset bet status
+            timeLeft = 20; // Reset time
+            clearInterval(timerInterval);
+            document.getElementById('overlay').style.display = 'none'; // Hide overlay to allow user input
+            startGame(); // Restart game
+        }
+    </script>
+</body>
+
+</html>
